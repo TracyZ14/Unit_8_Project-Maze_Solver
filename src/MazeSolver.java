@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 public class MazeSolver
 {
     private String[][] maze;
@@ -64,7 +65,7 @@ public class MazeSolver
 
     public boolean isPreviousCoordinate(int[] previousCoordinate, int[] coordinate)
     {
-        if(coordinate.equals(previousCoordinate))
+        if(Arrays.equals(coordinate, previousCoordinate))
         {
             return true;
         }
@@ -78,19 +79,23 @@ public class MazeSolver
         ArrayList<int[]> path = new ArrayList<int[]>();
         possiblePaths.add(path);
         path.add(coordinate);
-        while(!coordinate.equals(endingCoordinate))
+        while(!Arrays.equals(coordinate, endingCoordinate))
         {
             ArrayList<int[]> thisPath = possiblePaths.get(0);
-            int[] previousCoordinate = thisPath.get(thisPath.size() - 1);
-            ArrayList<int[]> nextCoordinates = findNextCoordinate(previousCoordinate);
-            for(int[] coordinates : nextCoordinates)
+            int[] currentCoordinate = thisPath.get(thisPath.size() - 1);
+            int[] previousCoordinate = new int[2];
+            if(thisPath.size() < 2)
             {
-                System.out.println(coordinates[0] + ", " + coordinates[1]);
+                previousCoordinate = currentCoordinate;
             }
-            System.out.println();
+            else
+            {
+                previousCoordinate = thisPath.get(thisPath.size() - 2);
+            }
+            ArrayList<int[]> nextCoordinates = findNextCoordinate(currentCoordinate);
             for(int i = nextCoordinates.size() - 1; i >= 0; i--)
             {
-                if(isPreviousCoordinate(previousCoordinate, nextCoordinates.get(i)))
+                if((isPreviousCoordinate(previousCoordinate, nextCoordinates.get(i))) || (isPreviousCoordinate(currentCoordinate, nextCoordinates.get(i))))
                 {
                     nextCoordinates.remove(i);
                 }
@@ -104,7 +109,7 @@ public class MazeSolver
                 for(int[] coordinates : nextCoordinates)
                 {
                     ArrayList<int[]> newPath = thisPath;
-                    thisPath.add(coordinates);
+                    newPath.add(coordinates);
                     possiblePaths.add(newPath);
                 }
                 possiblePaths.remove(0);
@@ -112,6 +117,7 @@ public class MazeSolver
             }
             coordinate = thisPath.get(thisPath.size() - 1);
         }
+        correctPath = possiblePaths.get(0);
         return printCorrectPath();
     }
 
