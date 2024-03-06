@@ -17,55 +17,109 @@ public class MazeSolver
         this.endingPointColumn = maze[0].length - 1;
     }
 
-    public ArrayList<int[]> findNextCoordinate(int[] currentCoordinate)
+    public boolean checkUp(int[] previousCoordinate, int[] currentCoordinate)
     {
         int row = currentCoordinate[0];
         int column = currentCoordinate[1];
-        System.out.println(row + " + " + column);
-        ArrayList<int[]> nextCoordinates = new ArrayList<int[]>();
-        int[] coordinate = new int[2];
         if(row != 0)
         {
             if(maze[row - 1][column].equals("."))
             {
-                coordinate[0] = row - 1;
-                coordinate[1] = column;
-                nextCoordinates.add(coordinate);
+                int[] upCoordinate = {row - 1, column};
+                if(!isSameCoordinate(previousCoordinate, upCoordinate))
+                {
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    public boolean checkLeft(int[] previousCoordinate, int[] currentCoordinate)
+    {
+        int row = currentCoordinate[0];
+        int column = currentCoordinate[1];
         if(column != 0)
         {
             if(maze[row][column - 1].equals("."))
             {
-                coordinate[0] = row;
-                coordinate[1] = column - 1;
-                nextCoordinates.add(coordinate);
+                int[] leftCoordinate = {row, column - 1};
+                if(!isSameCoordinate(previousCoordinate, leftCoordinate))
+                {
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    public boolean checkRight(int[] previousCoordinate, int[] currentCoordinate)
+    {
+        int row = currentCoordinate[0];
+        int column = currentCoordinate[1];
         if(column != endingPointColumn)
         {
             if(maze[row][column + 1].equals("."))
             {
-                coordinate[0] = row;
-                coordinate[1] = column + 1;
-                nextCoordinates.add(coordinate);
+                int[] rightCoordinate = {row, column + 1};
+                if(!isSameCoordinate(previousCoordinate, rightCoordinate))
+                {
+                    return true;
+                }
             }
         }
+        return false;
+    }
+
+    public boolean checkDown(int[] previousCoordinate, int[] currentCoordinate)
+    {
+        int row = currentCoordinate[0];
+        int column = currentCoordinate[1];
         if(row != endingPointRow)
         {
             if(maze[row + 1][column].equals("."))
             {
-                coordinate[0] = row + 1;
-                coordinate[1] = column;
-                nextCoordinates.add(coordinate);
+                int[] downCoordinate = {row + 1, column};
+                if(!isSameCoordinate(previousCoordinate, downCoordinate))
+                {
+                    return true;
+                }
             }
+        }
+        return false;
+    }
+
+    public ArrayList<int[]> findNextCoordinate(int[] previousCoordinate, int[] currentCoordinate)
+    {
+        int row = currentCoordinate[0];
+        int column = currentCoordinate[1];
+        ArrayList<int[]> nextCoordinates = new ArrayList<int[]>();
+        if(checkUp(previousCoordinate, currentCoordinate))
+        {
+            int[] coordinate = {row - 1, column};
+            nextCoordinates.add(coordinate);
+        }
+        if(checkLeft(previousCoordinate, currentCoordinate))
+        {
+            int[] coordinate = {row, column - 1};
+            nextCoordinates.add(coordinate);
+        }
+        if(checkRight(previousCoordinate, currentCoordinate))
+        {
+            int[] coordinate = {row, column + 1};
+            nextCoordinates.add(coordinate);
+        }
+        if(checkDown(previousCoordinate, currentCoordinate))
+        {
+            int[] coordinate = {row + 1, column};
+            nextCoordinates.add(coordinate);
         }
         return nextCoordinates;
     }
 
-    public boolean isPreviousCoordinate(int[] previousCoordinate, int[] coordinate)
+    public boolean isSameCoordinate(int[] coordinate1, int[] coordinate2)
     {
-        if(Arrays.equals(coordinate, previousCoordinate))
+        if(Arrays.equals(coordinate1, coordinate2))
         {
             return true;
         }
@@ -92,14 +146,7 @@ public class MazeSolver
             {
                 previousCoordinate = thisPath.get(thisPath.size() - 2);
             }
-            ArrayList<int[]> nextCoordinates = findNextCoordinate(currentCoordinate);
-            for(int i = nextCoordinates.size() - 1; i >= 0; i--)
-            {
-                if((isPreviousCoordinate(previousCoordinate, nextCoordinates.get(i))) || (isPreviousCoordinate(currentCoordinate, nextCoordinates.get(i))))
-                {
-                    nextCoordinates.remove(i);
-                }
-            }
+            ArrayList<int[]> nextCoordinates = findNextCoordinate(previousCoordinate, currentCoordinate);
             if(nextCoordinates.size() == 1)
             {
                 thisPath.add(nextCoordinates.get(0));
@@ -108,7 +155,12 @@ public class MazeSolver
             {
                 for(int[] coordinates : nextCoordinates)
                 {
-                    ArrayList<int[]> newPath = thisPath;
+                    ArrayList<int[]> pathTaken = new ArrayList<int[]>();
+                    for(int[] coordinatesPassed : thisPath)
+                    {
+                        pathTaken.add(coordinatesPassed);
+                    }
+                    ArrayList<int[]> newPath = pathTaken;
                     newPath.add(coordinates);
                     possiblePaths.add(newPath);
                 }
@@ -128,7 +180,7 @@ public class MazeSolver
         for(int[] coordinate : correctPath)
         {
             path += ("(" + coordinate[0] + ", " + coordinate[1] + ")");
-            if(!coordinate.equals(endingCoordinate))
+            if(!isSameCoordinate(coordinate, endingCoordinate))
             {
                 path += " ---> ";
             }

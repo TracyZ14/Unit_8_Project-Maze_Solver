@@ -6,9 +6,25 @@ public class Main
 {
     public static void main(String[] args)
     {
-        String[][] maze = getMaze("data/maze");
-        MazeSolver solver = new MazeSolver(maze);
-        System.out.println(solver.findCorrectPath());
+        String[][] maze1 = getMaze("data/maze1");
+        MazeSolver solver1 = new MazeSolver(maze1);
+        System.out.println("Maze 1: " + solver1.findCorrectPath());
+
+        String[][] maze2 = getMaze("data/maze2");
+        MazeSolver solver2 = new MazeSolver(maze2);
+        System.out.println("Maze 1: " + solver2.findCorrectPath());
+
+        String[][] maze3 = getMaze("data/maze3");
+        MazeSolver solver3 = new MazeSolver(maze3);
+        System.out.println("Maze 1: " + solver3.findCorrectPath());
+
+        String[][] maze4 = getMaze("data/maze4");
+        MazeSolver solver4 = new MazeSolver(maze4);
+        System.out.println("Maze 1: " + solver4.findCorrectPath());
+
+        String[][] maze5 = getMaze("data/maze5");
+        MazeSolver solver5 = new MazeSolver(maze5);
+        System.out.println("Maze 1: " + solver5.findCorrectPath());
     }
 
     public static String[][] getMaze(String fileName)
